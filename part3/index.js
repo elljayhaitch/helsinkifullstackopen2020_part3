@@ -5,7 +5,16 @@ const app = express()
 app.use(express.json())
 
 // middleware after json parsing from express
-app.use(morgan('tiny'))
+morgan.token('body', (req, res) => JSON.stringify(req.body));
+const loggingFormat = (tokens, req, res) => [
+  tokens.method(req, res),
+  tokens.url(req, res),
+  tokens.status(req, res),
+  tokens.res(req, res, 'content-length'), '-',
+  tokens['response-time'](req, res), 'ms',
+  tokens.body(req, res)
+].join(' ')
+app.use(morgan(loggingFormat))
 
 let persons = [
   {
