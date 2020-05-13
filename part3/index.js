@@ -1,3 +1,5 @@
+const PersonsService = require('./src/services/personsService');
+
 const express = require('express')
 var morgan = require('morgan')
 const app = express()
@@ -16,28 +18,13 @@ const loggingFormat = (tokens, req, res) => [
 ].join(' ')
 app.use(morgan(loggingFormat))
 
-let persons = [
-  {
-    name: "Arto Hellas",
-    number: "040-123456",
-    id: 1
-  },
-  {
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-    id: 2
-  },
-  {
-    name: "Dan Abramov",
-    number: "12-43-234345",
-    id: 3
-  },
-  {
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-    id: 4
-  }
-]
+let persons = [];
+PersonsService
+  .getAll()
+  .then(results => {
+    persons = results
+  })
+  .catch(error => { });
 
 app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
@@ -83,20 +70,20 @@ app.post('/api/persons', (request, response) => {
   const body = request.body
 
   if (!body.name) {
-    return response.status(400).json({ 
-      error: 'name is missing' 
+    return response.status(400).json({
+      error: 'name is missing'
     })
   }
 
   if (!body.number) {
-    return response.status(400).json({ 
-      error: 'number is missing' 
+    return response.status(400).json({
+      error: 'number is missing'
     })
   }
 
   if (persons.some(person => person.name == body.name)) {
-    return response.status(400).json({ 
-      error: 'name must be unique' 
+    return response.status(400).json({
+      error: 'name must be unique'
     })
   }
 
@@ -117,7 +104,7 @@ const unknownEndpoint = (request, response) => {
 }
 app.use(unknownEndpoint)
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
