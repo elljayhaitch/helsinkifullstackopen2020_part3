@@ -1,8 +1,8 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const Person = require('./models/person');
-var morgan = require('morgan');
+require('dotenv').config()
+const express = require('express')
+const cors = require('cors')
+const Person = require('./models/person')
+var morgan = require('morgan')
 
 // app
 const app = express()
@@ -11,7 +11,7 @@ app.use(cors())
 app.use(express.json())
 
 // middleware after json parsing from express
-morgan.token('body', (req, res) => JSON.stringify(req.body));
+morgan.token('body', (req) => JSON.stringify(req.body))
 const loggingFormat = (tokens, req, res) => [
   tokens.method(req, res),
   tokens.url(req, res),
@@ -23,6 +23,7 @@ const loggingFormat = (tokens, req, res) => [
 app.use(morgan(loggingFormat))
 
 app.get('/', (request, response) => {
+  // eslint-disable-next-line
   response.send(build / index.html)
 })
 
@@ -56,7 +57,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
